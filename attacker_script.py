@@ -68,7 +68,7 @@ def attacker_loop(settings,
     ### main loop
     while True:
         for scan_flags in test_flags + test_ports:
-            if base_ip == "dig":
+            if base_ip != "dig":
                 ip_range = base_ip + ip_space
             else:
                 ip_range = get_ip_from_dig(space=ip_space)
@@ -91,10 +91,10 @@ def attacker_loop(settings,
 
 if __name__ == '__main__':
     if len(sys.argv) >=2 :
-        attacker_output_dir = sys.argv[0]
-        base_ip = sys.argv[1]
-        ip_space = sys.argv[2]
-        settings = sys.argv[3]
+        attacker_output_dir = sys.argv[1]
+        base_ip = sys.argv[2]
+        ip_space = sys.argv[3]
+        settings = sys.argv[4]
     else:
         print("No input, enter: attacker's directory, base ip, ip_space,  and settings to be saved")
         home_dir = "./data/{}/{}/".format(time.strftime("%y%m%d") , time.strftime("%y%m%d_%H%M"))
@@ -107,7 +107,7 @@ if __name__ == '__main__':
 
     logging.basicConfig(
         filename=output_file,
-        filemode='a',
+        filemode='w',
         level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s ::: %(message)s',
         datefmt='%Y%m%d_%H:%M:%S')
