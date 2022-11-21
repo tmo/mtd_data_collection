@@ -9,7 +9,7 @@ Data format:
 │	│	│
 │	│	+ ─── attacker _output
 │	│	│	│
-│	│	│	> ─── log_[date]_[time].txt   <i>- output  of attacker string</i>
+│	│	│	> ─── log_[date]_[time].txt   <i>- output  of attacker script</i>
 │	│	│	+ ─── traces <i>- packet captures </i>
 │	│	│	│	│
 │	│	│	│	> ─── trace_[num]_[date][time]
@@ -17,6 +17,7 @@ Data format:
 │	│	+ ─── defender_output
 │	│	│	│
 │	│	│	> ─── mtd_times_[date]_[time].txt <i>- output of mtd notify, has times and IP changes </i>
+│	│	│	> ─── clientlog_[date]_[time].txt <i>- output of client script</i>
 │	│	│	+ ─── snort_output
 │	│	│	│	│
 │	│	│	│	> ─── alert
