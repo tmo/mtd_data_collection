@@ -2,7 +2,7 @@
 Client script
 Requests server IP (can assume authenticated), requests the homepage, then sleeps
 """
-import time, logging
+import time, logging, sys
 import urllib.request
 
 
@@ -18,7 +18,7 @@ def client_loop(wait_time = 60):
 
     logger = logging.getLogger('client')
     com_type = "HTTP GET"
-    logger.info("Sending {} with {} seconds between requests\n".format({com_type, wait_time}))
+    logger.info("Sending {} with {} seconds between requests\n".format(com_type, wait_time))
     
     ### main loop
     while True:
@@ -34,9 +34,13 @@ def client_loop(wait_time = 60):
         
 
 if __name__ == '__main__':
-    home_dir = "./data/{}/{}/".format(time.strftime("%y%m%d") , time.strftime("%y%m%d_%H%M"))
-    defender_output_dir=home_dir+"defender_output/"
+    if len(sys.argv) >=2 :
+        home_dir = sys.argv[1]
+    else:
+        print("No input, enter: the home dir")
+        home_dir = "./data/{}/{}/".format(time.strftime("%y%m%d") , time.strftime("%y%m%d_%H%M"))
 
+    defender_output_dir=home_dir+"defender_output/"
     output_file = defender_output_dir+"/clientlog_{}.txt".format(time.strftime("%y%m%d_%H%M%S"))
 
     logging.basicConfig(
