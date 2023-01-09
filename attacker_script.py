@@ -87,7 +87,7 @@ if __name__ == '__main__':
         ip_space="/16"
         settings="unknown"
  
-    output_file = attacker_output_dir+"/log_{}.txt".format(time.strftime("%y%m%d_%H%M%S"))
+    output_file = attacker_output_dir+"/attackerlog_{}.txt".format(time.strftime("%y%m%d_%H%M%S"))
 
     logging.basicConfig(
         filename=output_file,

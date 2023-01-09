@@ -29,18 +29,23 @@ def client_loop(wait_time = 60):
             logging.info("Client recived reply [{}...]".format(server_contents[:12]))
         except urllib.error.HTTPError as e:
             logging.info("Client request returned error {}".format(e))
+        except urllib.error.URLError as e:
+            logging.info("Client request returned URLerror, may have moved: {}".format(e))
+        except Exception as e:
+            logging.info("Another exception occured {}".format(e))
+
         time.sleep(wait_time)
         logging.info("Next client request")
         
 
 if __name__ == '__main__':
     if len(sys.argv) >=2 :
-        home_dir = sys.argv[1]
+        defender_output_dir = sys.argv[1]
     else:
         print("No input, enter: the home dir")
         home_dir = "./data/{}/{}/".format(time.strftime("%y%m%d") , time.strftime("%y%m%d_%H%M"))
-
-    defender_output_dir=home_dir+"defender_output/"
+        defender_output_dir=home_dir+"defender_output/"
+        
     output_file = defender_output_dir+"/clientlog_{}.txt".format(time.strftime("%y%m%d_%H%M%S"))
 
     logging.basicConfig(
