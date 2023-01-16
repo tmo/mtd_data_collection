@@ -53,12 +53,15 @@ def startTBed():
     server = net.addHost('server', cls=Host, 
             ip='10.0.0.100', 
             mac='00:00:00:00:00:33', defaultRoute=None)
-
+    dns = net.addHost('dns', cls=Host, 
+            ip='10.1.0.20', 
+            mac='00:00:00:00:00:44', defaultRoute=None)
     info( '*** Add links\n')
     net.addLink(s2, s1)
     net.addLink(s1, client)
     net.addLink(s1, attacker)
     net.addLink(s2, server)
+    net.addLink(s1, dns)
 
     info( '*** Starting network\n')
     # alternative to whats in ###
@@ -96,7 +99,7 @@ def run_experiments(net, server, client, attacker, home_dir, client_dir, attacke
         # run client script
         client.cmd('sudo python client_script.py {} &> {}/direct_logs/client_dirlog.txt &'.format(client_dir, home_dir))
         
-        attacker.cmd('sudo python attacker_script.py {} "dig" "/16" "300sMTD, topo_v3, snort rules: default+community," &> {}/direct_logs/attacker_dirlog.txt &'.format(attacker_dir, home_dir))
+        attacker.cmd('sudo python attacker_script.py {} "dig" "/20" "300sMTD, topo_v3, snort rules: default+community," &> {}/direct_logs/attacker_dirlog.txt &'.format(attacker_dir, home_dir))
         CLI(net)
     except KeyboardInterrupt as e:
         net.stop()
