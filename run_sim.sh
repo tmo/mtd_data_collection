@@ -32,7 +32,7 @@ sudo sshpass -p "karaf" ssh -p 8101 karaf@172.17.0.2 -y -o StrictHostKeyChecking
 echo "Creating folder..."
 sudo docker exec -it onos_new  sh -c  "mkdir /root/onos/conts/ "
 echo "Copying mtd file..."
-sudo docker cp ./mtd_apps/real_drop_cidr16_m300_onos-app-mtd-2.4.0.oar  onos_new:/root/onos/conts/mtd.oar
+sudo docker cp ./mtd_apps/real_drop_cidr16_m300_onos-app-mtd-2.4.0.oar onos_new:/root/onos/conts/mtd.oar
 sleep 20
 # sudo docker exec -it onos_new  sh -c "/root/onos/bin/onos-app localhost install! /root/onos/conts/mtd_drop_60.oar"
 echo "Finished running onos"
@@ -56,5 +56,7 @@ sudo bash -c "sudo snort -c /etc/snort/snort.conf -i s1-eth1 -h 10.0.0.100/16 -l
 
 # might be best to later intentionally name links, but for now can type net to track connections
 # run packet capture, on all links from simulated switch 1
-sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth1" -i "s1-eth2" -i "s1-eth3"  -w $home_dir/attacker_output/traces/trace -q &
-
+sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth1"  -w $home_dir/attacker_output/traces/trace_eth1 -q &
+sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth2"  -w $home_dir/attacker_output/traces/trace_eth2 -q &
+sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth3"  -w $home_dir/attacker_output/traces/trace_eth3 -q &
+sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth2" -i "s1-eth3"  -w $home_dir/attacker_output/traces/trace_all -q

@@ -88,4 +88,4 @@ if __name__ == '__main__':
         format='%(asctime)s - %(name)s - %(levelname)s ::: %(message)s',
         datefmt='%Y%m%d_%H:%M:%S')
 
-    client_loop()
+    client_loop(wait_time=9)

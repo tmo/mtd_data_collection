@@ -110,8 +110,9 @@ def coninuous_probing_attacker_action(scan_flags, ip_range, logger):
         # do so until process terminates
         scan_proc.kill()
         print(scan_proc.poll())
-        scan_proc.wait() # wait for exit
-        print(scan_proc.communicate())
+        # scan_proc.wait() # wait for exit
+        # print(scan_proc.communicate())
+        sys.stdout.flush()
 
         # print output
 
