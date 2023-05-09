@@ -187,7 +187,7 @@ if __name__ == '__main__':
         attacker_output_dir = sys.argv[1]
         base_ip = sys.argv[2]
         ip_space = sys.argv[3]
-        settings = sys.argv[4]
+        settings = sys.argv[4] 
     else:
         print("No input, enter: attacker's directory, base ip, ip_space,  and settings to be saved")
         home_dir = "./data/{}/{}/".format(time.strftime("%y%m%d") , time.strftime("%y%m%d_%H%M"))
@@ -208,4 +208,6 @@ if __name__ == '__main__':
     print("hi")
     sys.stdout.flush()
     # other inputs: base ip or from dig, base /16 ect
+
+    settings += "\nip space {} attacker type {}".format(ip_space, 'coninuous_probing_attacker_action')
     attacker_loop(settings, coninuous_probing_attacker_action, base_ip, ip_space)

@@ -91,6 +91,11 @@ def run_experiments(net, server, client, attacker, home_dir, client_dir, attacke
     server.cmd("source /etc/apache2/envvars")
     server.cmd("apache2 -k start -f /etc/apache2/apache2.conf")
 
+    # server.cmd("ip route add default via 10.0.0.100")
+    # server.cmd("cd serverfile")
+    # server.cmd("python -m http.server")
+    
+
     # start mtd after all hosts have been registered
     server.cmd('sudo docker exec -it onos_new  sh -c "/root/onos/bin/onos-app localhost install! /root/onos/conts/mtd.oar"')
     # server.waitOutput()
@@ -99,7 +104,7 @@ def run_experiments(net, server, client, attacker, home_dir, client_dir, attacke
         # run client script
         client.cmd('sudo python client_script.py {} &> {}/direct_logs/client_dirlog.txt &'.format(client_dir, home_dir))
         
-        attacker.cmd('sudo python attacker_script.py {} "dig" "/20" "300sMTD, topo_v3, snort rules: default+community," &> {}/direct_logs/attacker_dirlog.txt &'.format(attacker_dir, home_dir))
+        attacker.cmd('sudo python attacker_script.py {} "dig" "/16" " ," &> {}/direct_logs/attacker_dirlog.txt &'.format(attacker_dir, home_dir))
         CLI(net)
     except KeyboardInterrupt as e:
         net.stop()

@@ -1,15 +1,40 @@
 #!/bin/bash
-# Runs complete simulation to take data
+# # Runs complete simulation to take data
 
 today=$(date +"%y%m%d")
 hour=$(date +"%H%M")
 data_time="${today}_${hour}"
 home_dir="./data/${today}/${today}_${hour}"
 
-export home_dir
+# export home_dir
 
 # make folder structure
-sudo mkdir -p $home_dir/defender_output/snort_output $home_dir/attacker_output/traces $home_dir/direct_logs
+sudo mkdir -p $home_dir/defender_output/snort_output $home_dir/defender_output/traces  $home_dir/attacker_output/traces $home_dir/direct_logs
+
+# copy onos log files before exit
+# trap "sudo docker cp onos_new:/root/onos/apache-karaf-4.2.8/data/log/karaf.log $home_dir/direct_logs/karaf.log; exit"  INT TERM
+trap  'exit_cmds'  INT TERM
+
+exit_cmds() {
+    sudo docker cp onos_new:/root/onos/apache-karaf-4.2.8/data/log/karaf.log $home_dir/direct_logs/karaf.log
+    sudo cp /var/log/named/bind.log $home_dir/direct_logs/bind.log
+      
+    exit
+}
+
+# clear bind log so that we only recoord during this
+rm /var/log/named/bind.log
+sudo systemctl restart bind9
+
+# settings
+mtd_file="./mtd_apps/real_drop_cidr16_M60_onos-app-mtd-2.4.0.oar"
+topology_file="./testbed/testbed_topo_TCP_v6.py"
+commit=" "
+info="\nClient freq: 10s, Attacker frequency: continuous \nAim: tracking down delay"
+
+# write out the reason and settings for this run
+echo "\n...\n"$home_dir "\nMTD file: " $mtd_file "\nToplogy file:" $topology_file $commit  $info >> $home_dir/info.txt
+
 
 # restart bind 9
 # sudo systemctl restart bind9 ; named-checkconf ; sudo rndc reload mj.uq.dslab.com
@@ -32,7 +57,7 @@ sudo sshpass -p "karaf" ssh -p 8101 karaf@172.17.0.2 -y -o StrictHostKeyChecking
 echo "Creating folder..."
 sudo docker exec -it onos_new  sh -c  "mkdir /root/onos/conts/ "
 echo "Copying mtd file..."
-sudo docker cp ./mtd_apps/real_drop_cidr16_m300_onos-app-mtd-2.4.0.oar onos_new:/root/onos/conts/mtd.oar
+sudo docker cp $mtd_file onos_new:/root/onos/conts/mtd.oar
 sleep 20
 # sudo docker exec -it onos_new  sh -c "/root/onos/bin/onos-app localhost install! /root/onos/conts/mtd_drop_60.oar"
 echo "Finished running onos"
@@ -41,12 +66,12 @@ echo "Finished running onos"
 sudo killall inotifywait
 # sudo sh ./mod_mtd_notify.sh &> $home_dir/defender_output/mtd_times_$data_time.txt &
 sudo bash -c "./mod_mtd_notify.sh &>> $home_dir/defender_output/mtd_times_$data_time.txt" &
-
+sudo bash -c "./mod_dns_notify.sh &>> $home_dir/direct_logs/dns_times_$data_time.log" &
 
 # run testbed and scripts for each host
 # sudo mn -c && sudo -E python ./testbed/testbed_topo_TCP_v5.py $home_dir $home_dir/defender_output/ $home_dir/attacker_output/ 
 sudo killall xterm
-sudo -E xterm -hold -e bash -c "sudo mn -c && sudo -E python ./testbed/testbed_topo_TCP_v6.py $home_dir $home_dir/defender_output/ $home_dir/attacker_output/ " &
+sudo -E xterm -hold -e bash -c "sudo mn -c && sudo -E python $topology_file $home_dir $home_dir/defender_output/ $home_dir/attacker_output/ " &
 
 # wait for interfaces to be up
 sleep 30
@@ -56,7 +81,20 @@ sudo bash -c "sudo snort -c /etc/snort/snort.conf -i s1-eth1 -h 10.0.0.100/16 -l
 
 # might be best to later intentionally name links, but for now can type net to track connections
 # run packet capture, on all links from simulated switch 1
-sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth1"  -w $home_dir/attacker_output/traces/trace_eth1 -q &
-sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth2"  -w $home_dir/attacker_output/traces/trace_eth2 -q &
-sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth3"  -w $home_dir/attacker_output/traces/trace_eth3 -q &
-sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth2" -i "s1-eth3"  -w $home_dir/attacker_output/traces/trace_all -q
+sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth1"  -w $home_dir/attacker_output/traces/trace_s1_eth1 -q &
+sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth2"  -w $home_dir/attacker_output/traces/trace_s1_eth2 -q &
+sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth3"  -w $home_dir/attacker_output/traces/trace_s1_eth3 -q &
+sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth2" -i "s1-eth3"  -w $home_dir/attacker_output/traces/trace_s1_all -q &
+
+
+# capturing on server for delay tracking
+sudo dumpcap -b filesize:100000 -b files:100 -i "s2-eth1"  -w $home_dir/defender_output/traces/trace_s2_eth1 -q &
+sudo dumpcap -b filesize:100000 -b files:100 -i "s2-eth2"  -w $home_dir/defender_output/traces/trace_s2_eth2 -q &
+
+# capturing controller traffcic
+# fitler openflow doesn't work
+sudo dumpcap -b filesize:100000 -b files:100 -i "docker0"  -f "tcp port 6653" -w $home_dir/defender_output/traces/trace_docker0 -q  
+
+
+
+

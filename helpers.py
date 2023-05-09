@@ -29,16 +29,19 @@ def get_ip_from_dig_withdig(space="/16"):
     Arguments:
         space: the search space to append, with format "/n" 
     """
+    # just run this to get a dns request (see notes 16/01)
+    #if wait 5 seconds so just 65, otherwise ends after tcp connection done
+    try: # should not wait for it to finish now
+        subprocess.Popen(["dig www.mj.uq.dslab.com @10.1.0.20 +short +retry=0"], shell=True)
+    except Exception as e:
+        print(e)
+
     with open(os.path.abspath("/etc/bind/zones/forward.mj.uq.dslab.com.db"), 'r') as f:      
         ip = f.read()
 
     ip_addr = re.findall("[1-9].*", re.findall(r'www\sIN\sA\s.*',ip)[0])[0]
-    # just run this to get a dns request (see notes 16/01)
-    #if wait 5 seconds so just 65, otherwise ends after tcp connection done
-    try:
-        subprocess.check_output(["dig www.mj.uq.dslab.com @10.1.0.20 +short +retry=0"], shell=True)
-    except Exception as e:
-        print(e)
+
+
     
     # ip = ip[::-1].split(".",1)[1][::-1]+".*"
     # space = "/16"

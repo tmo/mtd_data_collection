@@ -25,7 +25,7 @@ def client_loop(wait_time = 60):
         server_ip =  get_ip_from_dig_withdig(space="")
         logging.info("Got IP {}".format(server_ip))
         try:
-            server_contents = urllib.request.urlopen("http://"+server_ip+"/DVWA").read()
+            server_contents = urllib.request.urlopen("http://"+server_ip+"/page.html").read()
             logging.info("Client recived reply [{}...]".format(server_contents[:12]))
         except urllib.error.HTTPError as e:
             logging.info("Client request returned error {}".format(e))
@@ -88,4 +88,5 @@ if __name__ == '__main__':
         format='%(asctime)s - %(name)s - %(levelname)s ::: %(message)s',
         datefmt='%Y%m%d_%H:%M:%S')
 
-    client_loop(wait_time=9)
+
+    client_loop(wait_time=10)

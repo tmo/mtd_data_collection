@@ -1,0 +1,19 @@
+#!/bin/sh
+
+###
+# the forward file is also checked instead of sending a dns request so 
+# for the dns update just check the update to this file which should
+# onlky come from reload.sh which is called by the mtd applicateion
+###
+
+HOOK_FILE=/etc/bind/zones/reverse.mj.uq.dslab.com.db
+
+while inotifywait -qq  $HOOK_FILE
+do
+        echo "IP changed, at $(date + '%T.%5N')";
+        sudo ovs-ofctl dump-flows s1  --protocols=OpenFlow13 >> switch_changes_s1.txt
+        sudo ovs-ofctl dump-flows s2  --protocols=OpenFlow13 >> switch_changes_s2.txt
+done
+
+
+
