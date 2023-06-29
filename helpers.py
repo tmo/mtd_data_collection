@@ -31,10 +31,10 @@ def get_ip_from_dig_withdig(space="/16"):
     """
     # just run this to get a dns request (see notes 16/01)
     #if wait 5 seconds so just 65, otherwise ends after tcp connection done
-    try: # should not wait for it to finish now
-        subprocess.Popen(["dig www.mj.uq.dslab.com @10.1.0.20 +short +retry=0"], shell=True)
-    except Exception as e:
-        print(e)
+    # try: # should not wait for it to finish now
+    #     subprocess.Popen(["dig www.mj.uq.dslab.com @10.1.0.20 +short +retry=0"], shell=True)
+    # except Exception as e:
+    #     print(e)
 
     with open(os.path.abspath("/etc/bind/zones/forward.mj.uq.dslab.com.db"), 'r') as f:      
         ip = f.read()
@@ -48,3 +48,15 @@ def get_ip_from_dig_withdig(space="/16"):
     ip_space = ip_addr + space
     logging.info("Got ip space {} from dig ".format(ip_space))
     return ip_space
+
+
+def save_switches(info_to_print):
+    print(info_to_print)
+    try: # should not wait for it to finish now
+        subprocess.run(["echo $(date +'%T.%5N') sw1"], shell=True)
+        subprocess.run(["sudo ovs-ofctl dump-flows s1  --protocols=OpenFlow13 "], shell=True)
+        subprocess.run(["echo $(date +'%T.%5N') sw2"], shell=True)
+        subprocess.run(["sudo ovs-ofctl dump-flows s2  --protocols=OpenFlow13"], shell=True)
+    except Exception as e:
+        print(e)
+    print(info_to_print)

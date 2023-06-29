@@ -27,10 +27,10 @@ rm /var/log/named/bind.log
 sudo systemctl restart bind9
 
 # settings
-mtd_file="./mtd_apps/real_drop_cidr16_M60_onos-app-mtd-2.4.0.oar"
+mtd_file="./mtd_apps/real_drop_cidr16_60_onos-app-mtd-2.4.1.oar"
 topology_file="./testbed/testbed_topo_TCP_v6.py"
 commit=" "
-info="\nClient freq: 10s, Attacker frequency: continuous \nAim: tracking down delay"
+info="\nClient freq: 13s, Attacker frequency: continuous \nAim: corrected data aquisition \n Skip DNS "
 
 # write out the reason and settings for this run
 echo "\n...\n"$home_dir "\nMTD file: " $mtd_file "\nToplogy file:" $topology_file $commit  $info >> $home_dir/info.txt

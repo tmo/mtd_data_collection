@@ -6,7 +6,7 @@ import time, logging, sys
 import urllib.request
 
 
-from helpers import get_ip_from_dig_withdig
+from helpers import get_ip_from_dig_withdig, save_switches
 
 def client_loop(wait_time = 60):
     """Main loop of the client.
@@ -22,10 +22,12 @@ def client_loop(wait_time = 60):
     
     ### main loop
     while True:
+        save_switches("pre trigger")
         server_ip =  get_ip_from_dig_withdig(space="")
+
         logging.info("Got IP {}".format(server_ip))
         try:
-            server_contents = urllib.request.urlopen("http://"+server_ip+"/page.html").read()
+            server_contents = urllib.request.urlopen("http://"+server_ip+"/page.html", timeout=300).read()
             logging.info("Client recived reply [{}...]".format(server_contents[:12]))
         except urllib.error.HTTPError as e:
             logging.info("Client request returned error {}".format(e))
@@ -33,7 +35,8 @@ def client_loop(wait_time = 60):
             logging.info("Client request returned URLerror, may have moved: {}".format(e))
         except Exception as e:
             logging.info("Another exception occured {}".format(e))
-
+        
+        save_switches("post trigger")
         time.sleep(wait_time)
         logging.info("Next client request")
 
@@ -89,4 +92,4 @@ if __name__ == '__main__':
         datefmt='%Y%m%d_%H:%M:%S')
 
 
-    client_loop(wait_time=10)
+    client_loop(wait_time=13)#sys.argv[2]

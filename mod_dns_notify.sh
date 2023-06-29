@@ -10,9 +10,12 @@ HOOK_FILE=/etc/bind/zones/reverse.mj.uq.dslab.com.db
 
 while inotifywait -qq  $HOOK_FILE
 do
-        echo "IP changed, at $(date + '%T.%5N')";
-        sudo ovs-ofctl dump-flows s1  --protocols=OpenFlow13 >> switch_changes_s1.txt
-        sudo ovs-ofctl dump-flows s2  --protocols=OpenFlow13 >> switch_changes_s2.txt
+        echo "IP changed, at $(date +'%T.%5N')";
+
+        echo "\n $(date +'%T.%5N') sw1" 
+        sudo ovs-ofctl dump-flows s1  --protocols=OpenFlow13 
+        echo "\n $(date +'%T.%5N') sw2" 
+        sudo ovs-ofctl dump-flows s2  --protocols=OpenFlow13 
 done
 
 

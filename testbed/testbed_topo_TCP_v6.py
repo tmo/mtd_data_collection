@@ -24,7 +24,7 @@ from mininet.cli import CLI
 from mininet.log import setLogLevel, info
 from mininet.link import TCLink, Intf
 from subprocess import call
-import sys
+import sys, time
 
 def startTBed():
 
@@ -53,15 +53,15 @@ def startTBed():
     server = net.addHost('server', cls=Host, 
             ip='10.0.0.100', 
             mac='00:00:00:00:00:33', defaultRoute=None)
-    dns = net.addHost('dns', cls=Host, 
-            ip='10.1.0.20', 
-            mac='00:00:00:00:00:44', defaultRoute=None)
+    # dns = net.addHost('dns', cls=Host, 
+    #         ip='10.1.0.20', 
+    #         mac='00:00:00:00:00:44', defaultRoute=None)
     info( '*** Add links\n')
     net.addLink(s2, s1)
     net.addLink(s1, client)
     net.addLink(s1, attacker)
     net.addLink(s2, server)
-    net.addLink(s1, dns)
+    # net.addLink(s1, dns)
 
     info( '*** Starting network\n')
     # alternative to whats in ###
@@ -85,8 +85,13 @@ def run_experiments(net, server, client, attacker, home_dir, client_dir, attacke
     net.pingAll()
 
     # Configuring server 
-    server.cmd("service apache2 stop")
-    server.cmd("service apache2 start")
+    # server.cmd("service apache2 stop")
+    # server.cmd("service apache2 start")
+    server.cmd("source /etc/apache2/envvars")
+    server.cmd("apache2 -k graceful-stop")
+    time.sleep(3)
+    # server.cmd("service nginx restart")
+    # server.cmd("service nginx reload")
     server.cmd("ip route add default via 10.0.0.100")
     server.cmd("source /etc/apache2/envvars")
     server.cmd("apache2 -k start -f /etc/apache2/apache2.conf")
@@ -104,7 +109,7 @@ def run_experiments(net, server, client, attacker, home_dir, client_dir, attacke
         # run client script
         client.cmd('sudo python client_script.py {} &> {}/direct_logs/client_dirlog.txt &'.format(client_dir, home_dir))
         
-        attacker.cmd('sudo python attacker_script.py {} "dig" "/16" " ," &> {}/direct_logs/attacker_dirlog.txt &'.format(attacker_dir, home_dir))
+        # attacker.cmd('sudo python attacker_script.py {} "dig" "/16" " ," &> {}/direct_logs/attacker_dirlog.txt &'.format(attacker_dir, home_dir))
         CLI(net)
     except KeyboardInterrupt as e:
         net.stop()
