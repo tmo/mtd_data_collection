@@ -21,6 +21,11 @@ def client_loop(wait_time = 60):
     logger.info("Sending {} with {} seconds between requests\n".format(com_type, wait_time))
     
     ### main loop
+    loop_length = 0
+    wait_times = [0.1, 0.2, 13, 31, 88]
+    loop_time = 5*60*60 #(6 hours)10 # 1080 (3 hrs)
+    total_sec = 5*60*60
+    start_time = time.time()
     while True:
         save_switches("pre trigger")
         server_ip =  get_ip_from_dig_withdig(space="")
@@ -37,7 +42,12 @@ def client_loop(wait_time = 60):
             logging.info("Another exception occured {}".format(e))
         
         save_switches("post trigger")
-        time.sleep(wait_time)
+        
+        logging.info("waiting {} seconds".format(wait_times[loop_length]))
+        time.sleep(wait_times[loop_length] )
+        if (time.time() - start_time) > total_sec:
+            start_time = time.time()
+            loop_length +=1
         logging.info("Next client request")
 
 def client_persistant_loop(wait_time = 60):
