@@ -13,9 +13,9 @@ do
         echo "IP changed, at $(date -Ins)";
 
         echo "\n $(date -Ins) sw1" 
-        sudo ovs-ofctl dump-flows s1  --protocols=OpenFlow13 
+        # sudo ovs-ofctl dump-flows s1  --protocols=OpenFlow13 
         echo "\n $(date -Ins) sw2" 
-        sudo ovs-ofctl dump-flows s2  --protocols=OpenFlow13 
+        # sudo ovs-ofctl dump-flows s2  --protocols=OpenFlow13 
 done
 
 
