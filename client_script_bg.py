@@ -21,12 +21,12 @@ def client_loop(wait_time = 60):
     com_type = "HTTP GET"
     logger.info("Sending {} with {} seconds between requests\n".format(com_type, wait_time))
     
-
-    # time.sleep(5)
+    html_files = ["index.html",  "p1mb.html",  "p2mb.html",  "p3mb.html",  "p4mb.html",  "p500kb.html"  "page.html"]
+    time.sleep(5)
     while True:
         logging.info("Requesting eserver")
         try:
-            server_contents = urllib.request.urlopen("http://10.3.0.100/index.html", timeout=300).read()
+            server_contents = urllib.request.urlopen("http://10.3.0.100/"+random.choice(html_files), timeout=300).read()
             logging.info("Client recived reply [{}...]".format(server_contents[:12]))
         except urllib.error.HTTPError as e:
             logging.info("Client request returned error {}".format(e))
