@@ -4,6 +4,7 @@ Requests server IP (can assume authenticated), requests the homepage, then sleep
 """
 import time, logging, sys
 import urllib.request
+import random
 
 
 from helpers import get_ip_from_dig_withdig, save_switches
@@ -20,19 +21,12 @@ def client_loop(wait_time = 60):
     com_type = "HTTP GET"
     logger.info("Sending {} with {} seconds between requests\n".format(com_type, wait_time))
     
-    ### main loop
-    loop_length = 0
-    wait_times = [13, 0.1, 0.2, 13, 31, 88]
-    loop_time = 5*60*60 #(6 hours)10 # 1080 (3 hrs)
-    total_sec = 5*60*60
-    start_time = time.time()
-    while True:
-        save_switches("pre trigger")
-        server_ip =  get_ip_from_dig_withdig(space="")
 
-        logging.info("Got IP {}".format(server_ip))
+    # time.sleep(5)
+    while True:
+        logging.info("Requesting eserver")
         try:
-            server_contents = urllib.request.urlopen("http://"+server_ip+"/page.html", timeout=300).read()
+            server_contents = urllib.request.urlopen("http://10.3.0.100/index.html", timeout=300).read()
             logging.info("Client recived reply [{}...]".format(server_contents[:12]))
         except urllib.error.HTTPError as e:
             logging.info("Client request returned error {}".format(e))
@@ -40,16 +34,11 @@ def client_loop(wait_time = 60):
             logging.info("Client request returned URLerror, may have moved: {}".format(e))
         except Exception as e:
             logging.info("Another exception occured {}".format(e))
-        
-        save_switches("post trigger")
-        
-        logging.info("waiting {} seconds".format(wait_times[loop_length]))
-        time.sleep(wait_times[loop_length] )
 
         # if (time.time() - start_time) > total_sec:
         #     start_time = time.time()
         #     # loop_length +=1
-        # time.sleep(wait_times[loop_length]/2 )
+        time.sleep(random.randint(10,15))
         logging.info("Next client request")
 
 def client_persistant_loop(wait_time = 60):
@@ -86,7 +75,7 @@ def client_persistant_loop(wait_time = 60):
 if __name__ == '__main__':
     if len(sys.argv) >=2 :
         if sys.argv[1] == 'h':
-            print("python client_script.py [home_dir]")
+            print("python client_script_bg.py [home_dir]")
             sys.exit(0)
         defender_output_dir = sys.argv[1]
     else:
@@ -94,7 +83,7 @@ if __name__ == '__main__':
         home_dir = "./data/{}/{}/".format(time.strftime("%y%m%d") , time.strftime("%y%m%d_%H%M"))
         defender_output_dir=home_dir+"defender_output/"
         
-    output_file = defender_output_dir+"/clientlog_{}.txt".format(time.strftime("%y%m%d_%H%M%S"))
+    output_file = defender_output_dir+"/clientbglog_{}.txt".format(time.strftime("%y%m%d_%H%M%S"))
 
     logging.basicConfig(
         filename=output_file,
