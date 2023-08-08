@@ -55,10 +55,10 @@ def startTBed():
             ip='10.0.0.100', 
             mac='00:00:00:00:00:33', defaultRoute=None)
     server2 = net.addHost('server2', cls=DockerHost, 
-            ip='10.0.0.200', 
+            ip='10.0.0.101', 
             mac='00:00:00:00:00:55', defaultRoute=None)
     server3 = net.addHost('server3', cls=DockerHost, 
-            ip='10.0.0.300', 
+            ip='10.0.0.102', 
             mac='00:00:00:00:00:66', defaultRoute=None)
     eserver = net.addHost('eserver', cls=DockerHost, 
             ip='10.3.0.100', 
@@ -84,9 +84,9 @@ def startTBed():
     net.get('s1').start([c0])
     net.get('s2').start([c0])
 
-    return net, [server1], [server2], [eserver], [client],  [attacker]
+    return net, [server1], [server2], [server3], [eserver], [client],  [attacker]
 
-def run_experiments(net, server1, server2, eserver, client, attacker, home_dir, client_dir, attacker_dir):
+def run_experiments(net, server1, server2, server3, eserver, client, attacker, home_dir, client_dir, attacker_dir):
     info( '*** Running host scripts\n')
     net.pingAll()
 
@@ -131,8 +131,8 @@ if __name__ == '__main__':
     # tbed_args  = startTBed()
     # run_experiments(*tbed_args,  home_dir, client_dir, attacker_dir)
 
-    net, [server1], [server2], [eserver], [client],  [attacker]  = startTBed()
-    run_experiments(net, server1, server2, eserver, client, attacker,  home_dir, client_dir, attacker_dir)
+    net, [server1], [server2], [server3], [eserver], [client],  [attacker]  = startTBed()
+    run_experiments(net, server1, server2, server3, eserver, client, attacker,  home_dir, client_dir, attacker_dir)
 
 
 
