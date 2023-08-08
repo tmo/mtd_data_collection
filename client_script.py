@@ -6,9 +6,9 @@ import time, logging, sys
 import urllib.request
 
 
-from helpers import get_ip_from_dig_withdig, save_switches
+from helpers import get_ip_from_dig_withdig, save_switches, get_ip_from_savefile
 
-def client_loop(wait_time = 60):
+def client_loop(wait_time = 60, ip_idx=0):
     """Main loop of the client.
     Contacts DVWA server with HTTP GET request once every [wait_time] seconds
 
@@ -22,13 +22,14 @@ def client_loop(wait_time = 60):
     
     ### main loop
     loop_length = 0
-    wait_times = [13, 0.1, 0.2, 13, 31, 88]
+    wait_times = [13/2, 0.1, 0.2, 13, 31, 88]
     loop_time = 5*60*60 #(6 hours)10 # 1080 (3 hrs)
     total_sec = 5*60*60
     start_time = time.time()
     while True:
         save_switches("pre trigger")
-        server_ip =  get_ip_from_dig_withdig(space="")
+        # server_ip =  get_ip_from_dig_withdig(space="")
+        server_ip =  get_ip_from_savefile(ip_idx)
 
         logging.info("Got IP {}".format(server_ip))
         try:
@@ -89,12 +90,13 @@ if __name__ == '__main__':
             print("python client_script.py [home_dir]")
             sys.exit(0)
         defender_output_dir = sys.argv[1]
+        tos = sys.argv[2]
     else:
         print("No input, enter: the home dir")
         home_dir = "./data/{}/{}/".format(time.strftime("%y%m%d") , time.strftime("%y%m%d_%H%M"))
         defender_output_dir=home_dir+"defender_output/"
         
-    output_file = defender_output_dir+"/clientlog_{}.txt".format(time.strftime("%y%m%d_%H%M%S"))
+    output_file = defender_output_dir+"/clientlog_{}_{}.txt".format(tos, time.strftime("%y%m%d_%H%M%S"))
 
     logging.basicConfig(
         filename=output_file,
@@ -104,4 +106,4 @@ if __name__ == '__main__':
         datefmt='%Y%m%d_%H:%M:%S')
 
 
-    client_loop(wait_time=13)#sys.argv[2]
+    client_loop(wait_time=13, ip_idx=tos)#sys.argv[2]

@@ -3,6 +3,16 @@ import os
 import re
 import subprocess
 
+def get_ip_from_savefile(ip_idx):
+    """ Get the ips at idx from the file saved in etczones"""
+    with open(os.path.abspath("/etc/bind/zones/vips.txt"), 'r') as f:      
+        ip = f.read()
+
+    ip_addrs = ip.replace("[", "").replace("]", "").split(',')#re.findall("[1-9].*", re.findall(r'www\sIN\sA\s.*',ip)[0])[0]
+    ip = ip_addrs[int(ip_idx)].strip()
+    logging.info("Got ip space {} from vips.txt".format(ip))
+    return ip
+
 def get_ip_from_dig(space="/16"):
     """Finds vIP address of host and return the space to search for it.
     Used for creating smaller search spaces for testing.
