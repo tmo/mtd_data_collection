@@ -28,7 +28,7 @@ sudo systemctl restart bind9
 
 # settings
 mtd_file="./mtd_apps/real_drop_cidr16_180_onos-app-mtd-2.4.2.oar"
-topology_file="./testbed/testbed_topo_TCP_v9.py"
+topology_file="./testbed/testbed_topo_TCP_v10.py"
 commit=" "
 info="\nClient freq: 13s, Attacker frequency: no attacker\nAim: corrected data aquisition \n Skip DNS "
 

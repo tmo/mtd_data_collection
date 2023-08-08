@@ -22,10 +22,11 @@ def client_loop(wait_time = 60, ip_idx=0):
     
     ### main loop
     loop_length = 0
-    wait_times = [13/2, 0.1, 0.2, 13, 31, 88]
+    wait_times = [13*3, 0.1, 0.2, 13, 31, 88]
     loop_time = 5*60*60 #(6 hours)10 # 1080 (3 hrs)
     total_sec = 5*60*60
     start_time = time.time()
+    time.sleep(int(ip_idx)*13)
     while True:
         save_switches("pre trigger")
         # server_ip =  get_ip_from_dig_withdig(space="")
