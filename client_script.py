@@ -4,9 +4,20 @@ Requests server IP (can assume authenticated), requests the homepage, then sleep
 """
 import time, logging, sys
 import urllib.request
+import random, math
 
 
 from helpers import get_ip_from_dig_withdig, save_switches, get_ip_from_savefile
+
+def poisson_wait_seconds(lam):
+    """ 
+    Return next wait time (in seconds) for poisson distribution with lambda requests per 
+    second.
+    """
+    p = random.random()
+    inter_arr_time_btw_reqs = (-math.log(1.0 - p) /
+                                lam)
+    return inter_arr_time_btw_reqs
 
 def client_loop(wait_time = 60, ip_idx=0):
     """Main loop of the client.
@@ -21,12 +32,9 @@ def client_loop(wait_time = 60, ip_idx=0):
     logger.info("Sending {} with {} seconds between requests\n".format(com_type, wait_time))
     
     ### main loop
-    loop_length = 0
-    wait_times = [13*3, 0.1, 0.2, 13, 31, 88]
-    loop_time = 5*60*60 #(6 hours)10 # 1080 (3 hrs)
-    total_sec = 5*60*60
-    start_time = time.time()
-    time.sleep(int(ip_idx)*13)
+    lambda_reqspersec = 10
+
+    time.sleep(int(ip_idx)*1/lambda_reqspersec)
     while True:
         save_switches("pre trigger")
         # server_ip =  get_ip_from_dig_withdig(space="")
@@ -34,7 +42,7 @@ def client_loop(wait_time = 60, ip_idx=0):
 
         logging.info("Got IP {}".format(server_ip))
         try:
-            server_contents = urllib.request.urlopen("http://"+server_ip+"/page.html", timeout=300).read()
+            server_contents = urllib.request.urlopen("http://"+server_ip+"/p2mb.html", timeout=1).read()
             logging.info("Client recived reply [{}...]".format(server_contents[:12]))
         except urllib.error.HTTPError as e:
             logging.info("Client request returned error {}".format(e))
@@ -45,8 +53,9 @@ def client_loop(wait_time = 60, ip_idx=0):
         
         save_switches("post trigger")
         
-        logging.info("waiting {} seconds".format(wait_times[loop_length]))
-        time.sleep(wait_times[loop_length] )
+        wait_time = poisson_wait_seconds(lambda_reqspersec)
+        logging.info("waiting {} seconds".format(wait_time))
+        time.sleep(wait_time)
 
         # if (time.time() - start_time) > total_sec:
         #     start_time = time.time()

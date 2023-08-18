@@ -28,12 +28,15 @@ sudo systemctl restart bind9
 
 # settings
 mtd_file="./mtd_apps/real_drop_cidr16_180_onos-app-mtd-2.4.2.oar"
-topology_file="./testbed/testbed_topo_TCP_v10.py"
+topology_file="./testbed/testbed_topo_TCP_v6.py"
 commit=" "
 info="\nClient freq: 13s, Attacker frequency: no attacker\nAim: corrected data aquisition \n Skip DNS "
 
 # write out the reason and settings for this run
 echo "\n...\n"$home_dir "\nMTD file: " $mtd_file "\nToplogy file:" $topology_file $commit  $info >> $home_dir/info.txt
+
+# copy server files into correct folder, for default server 1
+sudo cp -R ./testbed/server_files/html/. /var/www/html/
 
 
 # restart bind 9
