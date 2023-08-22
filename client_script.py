@@ -19,7 +19,7 @@ def poisson_wait_seconds(lam):
                                 lam)
     return inter_arr_time_btw_reqs
 
-def client_loop(wait_time = 60, ip_idx=0):
+def client_loop(wait_time = 60):
     """Main loop of the client.
     Contacts DVWA server with HTTP GET request once every [wait_time] seconds
 
@@ -34,11 +34,11 @@ def client_loop(wait_time = 60, ip_idx=0):
     ### main loop
     lambda_reqspersec = 10
 
-    time.sleep(int(ip_idx)*1/lambda_reqspersec)
+    time.sleep(1/lambda_reqspersec)
     while True:
         save_switches("pre trigger")
-        # server_ip =  get_ip_from_dig_withdig(space="")
-        server_ip =  get_ip_from_savefile(ip_idx)
+        server_ip =  get_ip_from_dig_withdig(space="")
+
 
         logging.info("Got IP {}".format(server_ip))
         try:
@@ -57,10 +57,6 @@ def client_loop(wait_time = 60, ip_idx=0):
         logging.info("waiting {} seconds".format(wait_time))
         time.sleep(wait_time)
 
-        # if (time.time() - start_time) > total_sec:
-        #     start_time = time.time()
-        #     # loop_length +=1
-        # time.sleep(wait_times[loop_length]/2 )
         logging.info("Next client request")
 
 def client_persistant_loop(wait_time = 60):
@@ -100,13 +96,12 @@ if __name__ == '__main__':
             print("python client_script.py [home_dir]")
             sys.exit(0)
         defender_output_dir = sys.argv[1]
-        tos = sys.argv[2]
     else:
         print("No input, enter: the home dir")
         home_dir = "./data/{}/{}/".format(time.strftime("%y%m%d") , time.strftime("%y%m%d_%H%M"))
         defender_output_dir=home_dir+"defender_output/"
         
-    output_file = defender_output_dir+"/clientlog_{}_{}.txt".format(tos, time.strftime("%y%m%d_%H%M%S"))
+    output_file = defender_output_dir+"/clientlog_{}.txt".format(time.strftime("%y%m%d_%H%M%S"))
 
     logging.basicConfig(
         filename=output_file,
@@ -116,4 +111,4 @@ if __name__ == '__main__':
         datefmt='%Y%m%d_%H:%M:%S')
 
 
-    client_loop(wait_time=13, ip_idx=tos)#sys.argv[2]
+    client_loop(wait_time=13)#sys.argv[2]
