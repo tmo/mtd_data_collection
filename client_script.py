@@ -2,7 +2,7 @@
 Client script
 Requests server IP (can assume authenticated), requests the homepage, then sleeps
 """
-import time, logging, sys
+import time, logging, sys, random
 import urllib.request
 
 
@@ -20,19 +20,15 @@ def client_loop(wait_time = 60):
     com_type = "HTTP GET"
     logger.info("Sending {} with {} seconds between requests\n".format(com_type, wait_time))
     
-    ### main loop
-    loop_length = 0
-    wait_times = [13, 0.1, 0.2, 13, 31, 88]
-    loop_time = 5*60*60 #(6 hours)10 # 1080 (3 hrs)
-    total_sec = 5*60*60
-    start_time = time.time()
+    html_files = ["index.html",  "p1mb.html",  "p2mb.html",  "p3mb.html",  "p500kb.html"  "page.html"]
+    time.sleep(5)
     while True:
         save_switches("pre trigger")
         server_ip =  get_ip_from_dig_withdig(space="")
 
         logging.info("Got IP {}".format(server_ip))
         try:
-            server_contents = urllib.request.urlopen("http://"+server_ip+"/page.html", timeout=300).read()
+            server_contents = urllib.request.urlopen("http://"+server_ip+"/"+random.choice(html_files), timeout=2).read()
             logging.info("Client recived reply [{}...]".format(server_contents[:12]))
         except urllib.error.HTTPError as e:
             logging.info("Client request returned error {}".format(e))
@@ -40,16 +36,9 @@ def client_loop(wait_time = 60):
             logging.info("Client request returned URLerror, may have moved: {}".format(e))
         except Exception as e:
             logging.info("Another exception occured {}".format(e))
-        
-        save_switches("post trigger")
-        
-        logging.info("waiting {} seconds".format(wait_times[loop_length]))
-        time.sleep(wait_times[loop_length] )
 
-        # if (time.time() - start_time) > total_sec:
-        #     start_time = time.time()
-        #     # loop_length +=1
-        # time.sleep(wait_times[loop_length]/2 )
+        logging.info("waiting {} seconds".format(wait_time))
+        time.sleep(wait_time)
         logging.info("Next client request")
 
 def client_persistant_loop(wait_time = 60):
@@ -104,4 +93,4 @@ if __name__ == '__main__':
         datefmt='%Y%m%d_%H:%M:%S')
 
 
-    client_loop(wait_time=13)#sys.argv[2]
+    client_loop(wait_time=1)#sys.argv[2]
