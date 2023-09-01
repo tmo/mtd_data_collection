@@ -93,4 +93,4 @@ if __name__ == '__main__':
         datefmt='%Y%m%d_%H:%M:%S')
 
 
-    client_loop(wait_time=1)#sys.argv[2]
+    client_loop(wait_time=2)#sys.argv[2]
