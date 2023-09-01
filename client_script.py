@@ -33,7 +33,8 @@ def client_loop(wait_time = 60):
     
     ### main loop
     lambda_reqspersec = 10
-
+    html_files = ["p10kb.html", "p10kb.html", "p10kb.html", "p50kb.html", "p50kb.html", "p50kb.html", "p50kb.html", "p100kb.html", "p100kb.html", "p100kb.html", "p200kb.html", "p300kb.html", "p400kb.html" ]
+    
     time.sleep(1/lambda_reqspersec)
     while True:
         save_switches("pre trigger")
@@ -42,7 +43,7 @@ def client_loop(wait_time = 60):
 
         logging.info("Got IP {}".format(server_ip))
         try:
-            server_contents = urllib.request.urlopen("http://"+server_ip+"/p2mb.html", timeout=1).read()
+            server_contents = urllib.request.urlopen("http://"+server_ip+"/"+random.choice(html_files), timeout=1).read()
             logging.info("Client recived reply [{}...]".format(server_contents[:12]))
         except urllib.error.HTTPError as e:
             logging.info("Client request returned error {}".format(e))

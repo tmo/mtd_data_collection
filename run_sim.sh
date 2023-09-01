@@ -30,7 +30,7 @@ sudo systemctl restart bind9
 mtd_file="./mtd_apps/real_drop_cidr16_180_onos-app-mtd-2.4.1.oar"
 topology_file="./testbed/testbed_topo_TCP_v6.py"
 commit=" "
-info="\nAttacker frequency: no attacker\nAim: more data for lambda\n Skip DNS "
+info="\nAim: more data for lambda\n Skip DNS "
 
 # write out the reason and settings for this run
 echo "\n...\n"$home_dir "\nMTD file: " $mtd_file "\nToplogy file:" $topology_file $commit  $info >> $home_dir/info.txt
@@ -80,25 +80,25 @@ sudo -E xterm -hold -e bash -c "sudo mn -c && sudo -E python $topology_file $hom
 sleep 30
 # start snort
 # this only tracks the server IPs
-sudo bash -c "sudo snort -c /etc/snort/snort.conf -i s1-eth1 -h 10.0.0.100/16 -l $home_dir/defender_output/snort_output -A fast &> $home_dir/direct_logs/snort_dirlog.txt &" &
+# sudo bash -c "sudo snort -c /etc/snort/snort.conf -i s1-eth1 -h 10.0.0.100/16 -l $home_dir/defender_output/snort_output -A fast &> $home_dir/direct_logs/snort_dirlog.txt &" &
 
 # might be best to later intentionally name links, but for now can type net to track connections
 # run packet capture, on all links from simulated switch 1
-sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth1"  -w $home_dir/attacker_output/traces/trace_s1_eth1 -q &
-sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth2"  -w $home_dir/attacker_output/traces/trace_s1_eth2 -q &
-sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth3"  -w $home_dir/attacker_output/traces/trace_s1_eth3 -q &
+# sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth1"  -w $home_dir/attacker_output/traces/trace_s1_eth1 -q &
+sudo dumpcap  -i "s1-eth2"  -w $home_dir/attacker_output/traces/trace_s1_eth2 -q 
+# sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth3"  -w $home_dir/attacker_output/traces/trace_s1_eth3 -q &
 # sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth4"  -w $home_dir/attacker_output/traces/trace_s1_eth4 -q &
 # sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth5"  -w $home_dir/attacker_output/traces/trace_s1_eth5 -q &
-sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth2" -i "s1-eth3"  -w $home_dir/attacker_output/traces/trace_s1_all -q &
+# sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth2" -i "s1-eth3"  -w $home_dir/attacker_output/traces/trace_s1_all -q &
 
 
-# capturing on server for delay tracking
-sudo dumpcap -b filesize:100000 -b files:100 -i "s2-eth1"  -w $home_dir/defender_output/traces/trace_s2_eth1 -q &
-sudo dumpcap -b filesize:100000 -b files:100 -i "s2-eth2"  -w $home_dir/defender_output/traces/trace_s2_eth2 -q &
+# # capturing on server for delay tracking
+# sudo dumpcap -b filesize:100000 -b files:100 -i "s2-eth1"  -w $home_dir/defender_output/traces/trace_s2_eth1 -q &
+# sudo dumpcap -b filesize:100000 -b files:100 -i "s2-eth2"  -w $home_dir/defender_output/traces/trace_s2_eth2 -q &
 
-# capturing controller traffcic
-# fitler openflow doesn't work
-sudo dumpcap -b filesize:100000 -b files:100 -i "docker0"  -f "tcp port 6653" -w $home_dir/defender_output/traces/trace_docker0 -q  
+# # capturing controller traffcic
+# # fitler openflow doesn't work
+# sudo dumpcap -b filesize:100000 -b files:100 -i "docker0"  -f "tcp port 6653" -w $home_dir/defender_output/traces/trace_docker0 -q  
 
 
 
