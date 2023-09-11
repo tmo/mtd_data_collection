@@ -85,7 +85,7 @@ sleep 30
 # might be best to later intentionally name links, but for now can type net to track connections
 # run packet capture, on all links from simulated switch 1
 # sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth1"  -w $home_dir/attacker_output/traces/trace_s1_eth1 -q &
-sudo dumpcap  -i "s1-eth2"  -w $home_dir/attacker_output/traces/trace_s1_eth2 -q 
+sudo dumpcap  -b filesize:5000000  -i "s1-eth2"  -w $home_dir/attacker_output/traces/trace_s1_eth2 -q 
 # sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth3"  -w $home_dir/attacker_output/traces/trace_s1_eth3 -q &
 # sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth4"  -w $home_dir/attacker_output/traces/trace_s1_eth4 -q &
 # sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth5"  -w $home_dir/attacker_output/traces/trace_s1_eth5 -q &
