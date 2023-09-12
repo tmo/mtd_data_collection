@@ -27,7 +27,8 @@ rm /var/log/named/bind.log
 sudo systemctl restart bind9
 
 # settings
-mtd_file="./mtd_apps/real_drop_cidr16_180_onos-app-mtd-2.4.1.oar"
+mtd_file="./mtd_apps/onos-app-mtd-2.5.0.test.oar"
+# mtd_file="./mtd_apps/real_drop_cidr16_60_onos-app-mtd-2.4.1.oar"
 topology_file="./testbed/testbed_topo_TCP_v6.py"
 commit=" "
 info="\nAim: more data for lambda\n Skip DNS "
@@ -50,7 +51,7 @@ sudo docker rm onos_new
 echo "Running docker..."
 sudo docker run -t -d -v /etc/bind/zones:/etc/bind/zones -p 8101:8101 -p 5005:5005 -p 8181:8181 -p 6653:6653 -p 3000:3000 -p 830:830 --env JAVA_DEBUG_PORT="0.0.0.0:5005" --name onos_new onosproject/onos:2.4.0
 echo "Waiting for container to start ..."
-sleep 60 # timed, 40 is about right
+sleep 40 # timed, 40 is about right
 # start openflow services
 echo "Logging in ..."
 sudo ssh-keygen -f "/root/.ssh/known_hosts" -R "[172.17.0.2]:8101"
@@ -61,7 +62,7 @@ echo "Creating folder..."
 sudo docker exec -it onos_new  sh -c  "mkdir /root/onos/conts/ "
 echo "Copying mtd file..."
 sudo docker cp $mtd_file onos_new:/root/onos/conts/mtd.oar
-sleep 20
+sleep 15
 # sudo docker exec -it onos_new  sh -c "/root/onos/bin/onos-app localhost install! /root/onos/conts/mtd_drop_60.oar"
 echo "Finished running onos"
 
@@ -76,8 +77,10 @@ sudo bash -c "./mod_dns_notify.sh &>> $home_dir/direct_logs/dns_times_$data_time
 sudo killall xterm
 sudo -E xterm -hold -e bash -c "sudo mn -c && sudo -E python $topology_file $home_dir $home_dir/defender_output/ $home_dir/attacker_output/ " &
 
+sudo dumpcap -b filesize:100000 -b files:100 -i "docker0"  -f "tcp port 6653" -w $home_dir/defender_output/traces/trace_docker0 -q  
+
 # wait for interfaces to be up
-sleep 30
+sleep 25
 # start snort
 # this only tracks the server IPs
 # sudo bash -c "sudo snort -c /etc/snort/snort.conf -i s1-eth1 -h 10.0.0.100/16 -l $home_dir/defender_output/snort_output -A fast &> $home_dir/direct_logs/snort_dirlog.txt &" &
@@ -85,7 +88,7 @@ sleep 30
 # might be best to later intentionally name links, but for now can type net to track connections
 # run packet capture, on all links from simulated switch 1
 # sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth1"  -w $home_dir/attacker_output/traces/trace_s1_eth1 -q &
-sudo dumpcap  -i "s1-eth2"  -w $home_dir/attacker_output/traces/trace_s1_eth2 -q 
+sudo dumpcap  -b filesize:5000000 -i "s1-eth2"  -w $home_dir/attacker_output/traces/trace_s1_eth2 -q 
 # sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth3"  -w $home_dir/attacker_output/traces/trace_s1_eth3 -q &
 # sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth4"  -w $home_dir/attacker_output/traces/trace_s1_eth4 -q &
 # sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth5"  -w $home_dir/attacker_output/traces/trace_s1_eth5 -q &

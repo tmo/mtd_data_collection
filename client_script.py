@@ -32,30 +32,30 @@ def client_loop(wait_time = 60):
     logger.info("Sending {} with {} seconds between requests\n".format(com_type, wait_time))
     
     ### main loop
-    lambda_reqspersec = 10
+    lambda_reqspersec = 1/5
     html_files = ["p10kb.html", "p10kb.html", "p10kb.html", "p50kb.html", "p50kb.html", "p50kb.html", "p50kb.html", "p100kb.html", "p100kb.html", "p100kb.html", "p200kb.html", "p300kb.html", "p400kb.html" ]
     
     time.sleep(1/lambda_reqspersec)
     while True:
         save_switches("pre trigger")
-        server_ip =  get_ip_from_dig_withdig(space="")
+        # server_ip =  get_ip_from_dig_withdig(space="")
+        time.sleep(wait_time)
 
-
-        logging.info("Got IP {}".format(server_ip))
-        try:
-            server_contents = urllib.request.urlopen("http://"+server_ip+"/"+random.choice(html_files), timeout=1).read()
-            logging.info("Client recived reply [{}...]".format(server_contents[:12]))
-        except urllib.error.HTTPError as e:
-            logging.info("Client request returned error {}".format(e))
-        except urllib.error.URLError as e:
-            logging.info("Client request returned URLerror, may have moved: {}".format(e))
-        except Exception as e:
-            logging.info("Another exception occured {}".format(e))
+        # logging.info("Got IP {}".format(server_ip))
+        # try:
+        #     server_contents = urllib.request.urlopen("http://"+server_ip+"/"+random.choice(html_files), timeout=1).read()
+        #     logging.info("Client recived reply [{}...]".format(server_contents[:12]))
+        # except urllib.error.HTTPError as e:
+        #     logging.info("Client request returned error {}".format(e))
+        # except urllib.error.URLError as e:
+        #     logging.info("Client request returned URLerror, may have moved: {}".format(e))
+        # except Exception as e:
+        #     logging.info("Another exception occured {}".format(e))
         
         save_switches("post trigger")
         
-        wait_time = poisson_wait_seconds(lambda_reqspersec)
-        logging.info("waiting {} seconds".format(wait_time))
+        # wait_time = poisson_wait_seconds(lambda_reqspersec)
+        # logging.info("waiting {} seconds".format(wait_time))
         time.sleep(wait_time)
 
         logging.info("Next client request")
@@ -112,4 +112,4 @@ if __name__ == '__main__':
         datefmt='%Y%m%d_%H:%M:%S')
 
 
-    client_loop(wait_time=13)#sys.argv[2]
+    client_loop(wait_time=15)#sys.argv[2]
