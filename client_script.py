@@ -7,7 +7,7 @@ import urllib.request
 import random, math
 
 
-from helpers import get_ip_from_dig_withdig, save_switches, get_ip_from_savefile
+from helpers import get_ip_from_dig_withdig
 
 def poisson_wait_seconds(lam):
     """ 
@@ -32,12 +32,16 @@ def client_loop(wait_time = 60):
     logger.info("Sending {} with {} seconds between requests\n".format(com_type, wait_time))
     
     ### main loop
-    lambda_reqspersec = 1/2
-    html_files = ["p100kb.html", "p100kb.html", "p100kb.html", "p500kb.html", "p500kb.html", "p500kb.html", "p500kb.html", "p1mb.html", "p1mb.html", "p1mb.html", "p2mb.html", "p3mb.html", "p4mb.html" ]
+    lambda_s = [2/180, 1/15, 1/2, 1, 10]
+    lambda_idx = 0
+    start_time = time.time()
+
+    lambda_reqspersec = lambda_s[lambda_idx]
+    html_files = ["p10kb.html", "p10kb.html", "p10kb.html", "p50kb.html", "p50kb.html", "p50kb.html", "p50kb.html", "p100kb.html", "p100kb.html", "p100kb.html", "p200kb.html", "p300kb.html", "p400kb.html" ]
     
     time.sleep(1/lambda_reqspersec)
     while True:
-        save_switches("pre trigger")
+
         server_ip =  get_ip_from_dig_withdig(space="")
 
 
@@ -51,12 +55,19 @@ def client_loop(wait_time = 60):
             logging.info("Client request returned URLerror, may have moved: {}".format(e))
         except Exception as e:
             logging.info("Another exception occured {}".format(e))
-        
-        save_switches("post trigger")
-        
+                
         wait_time = poisson_wait_seconds(lambda_reqspersec)
         logging.info("waiting {} seconds".format(wait_time))
         time.sleep(wait_time)
+
+
+        # if it's been 24 hours switch to the next lambda
+        if (time.time()-start_time) > 24*60*60: # seconds
+            lambda_idx += 1
+            lambda_reqspersec = lambda_s[lambda_idx]
+            start_time = time.time()   
+            logging.info("Switchin to lambda {} for the next 24 hours".format(lambda_s[lambda_idx]))
+                     
 
         logging.info("Next client request")
 
