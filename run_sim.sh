@@ -82,24 +82,5 @@ sleep 30
 # this only tracks the server IPs
 # sudo bash -c "sudo snort -c /etc/snort/snort.conf -i s1-eth1 -h 10.0.0.100/16 -l $home_dir/defender_output/snort_output -A fast &> $home_dir/direct_logs/snort_dirlog.txt &" &
 
-# might be best to later intentionally name links, but for now can type net to track connections
-# run packet capture, on all links from simulated switch 1
-# sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth1"  -w $home_dir/attacker_output/traces/trace_s1_eth1 -q &
+# run packet capture, on client/attacker link
 sudo dumpcap  -b filesize:5000000  -i "s1-eth2"  -w $home_dir/attacker_output/traces/trace_s1_eth2 -q 
-# sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth3"  -w $home_dir/attacker_output/traces/trace_s1_eth3 -q &
-# sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth4"  -w $home_dir/attacker_output/traces/trace_s1_eth4 -q &
-# sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth5"  -w $home_dir/attacker_output/traces/trace_s1_eth5 -q &
-# sudo dumpcap -b filesize:100000 -b files:100 -i "s1-eth2" -i "s1-eth3"  -w $home_dir/attacker_output/traces/trace_s1_all -q &
-
-
-# # capturing on server for delay tracking
-# sudo dumpcap -b filesize:100000 -b files:100 -i "s2-eth1"  -w $home_dir/defender_output/traces/trace_s2_eth1 -q &
-# sudo dumpcap -b filesize:100000 -b files:100 -i "s2-eth2"  -w $home_dir/defender_output/traces/trace_s2_eth2 -q &
-
-# # capturing controller traffcic
-# # fitler openflow doesn't work
-# sudo dumpcap -b filesize:100000 -b files:100 -i "docker0"  -f "tcp port 6653" -w $home_dir/defender_output/traces/trace_docker0 -q  
-
-
-
-

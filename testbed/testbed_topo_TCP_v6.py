@@ -107,7 +107,7 @@ def run_experiments(net, server, client, attacker, home_dir, client_dir, attacke
 
     try:
         # run client script
-        client.cmd('sudo python client_script.py {} &> {}/direct_logs/client_dirlog.txt &'.format(client_dir, home_dir))
+        client.cmd('sudo python masking_client_script.py {} {} &> {}/direct_logs/client_dirlog.txt &'.format(client_dir, 13, home_dir))
         
         # attacker.cmd('sudo python attacker_script.py {} "dig" "/16" " ," &> {}/direct_logs/attacker_dirlog.txt &'.format(attacker_dir, home_dir))
         CLI(net)
