@@ -61,12 +61,11 @@ def get_ip_from_dig_withdig(space="/16"):
 
 
 def save_switches(info_to_print):
-    print(info_to_print)
     try: # should not wait for it to finish now
+        subprocess.run(["echo {}".format(info_to_print)], shell=True)
         subprocess.run(["echo $(date +'%T.%5N') sw1"], shell=True)
         subprocess.run(["sudo ovs-ofctl dump-flows s1  --protocols=OpenFlow13 "], shell=True)
         subprocess.run(["echo $(date +'%T.%5N') sw2"], shell=True)
         subprocess.run(["sudo ovs-ofctl dump-flows s2  --protocols=OpenFlow13"], shell=True)
     except Exception as e:
         print(e)
-    print(info_to_print)

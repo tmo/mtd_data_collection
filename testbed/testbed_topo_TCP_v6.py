@@ -5,14 +5,15 @@ v5:
 Modifying v13 but running scripts automatically
 topology
 
-                  controller
-                  .      .
-                 .        .
-                .          .
-   client --- ssw1 ------ ssw2 --- server
-                |
-                |
-               attacker
+                      controller
+                      .      .
+                     .        .
+                    .          .
+       client --- ssw1 ------ ssw2 --- server
+    fake client --- |
+                    |
+                    |
+                   attacker
 """
 
 from mininet.net import Mininet
@@ -50,6 +51,9 @@ def startTBed():
     client = net.addHost('client', cls=Host, 
             ip='10.1.0.10', 
             mac='00:00:00:00:00:22', defaultRoute=None)
+    fake_client = net.addHost('fakeclient', cls=Host, 
+            ip='10.3.0.10', 
+            mac='00:00:00:00:00:44', defaultRoute=None)
     server = net.addHost('server', cls=Host, 
             ip='10.0.0.100', 
             mac='00:00:00:00:00:33', defaultRoute=None)
@@ -60,6 +64,7 @@ def startTBed():
     net.addLink(s2, s1)
     net.addLink(s1, client)
     net.addLink(s1, attacker)
+    net.addLink(s1, fake_client)
     net.addLink(s2, server)
     # net.addLink(s1, dns)
 
@@ -78,9 +83,9 @@ def startTBed():
 
     ###
 
-    return net, [server], [client], [attacker]
+    return net, [server], [client], [fake_client], [attacker]
 
-def run_experiments(net, server, client, attacker, home_dir, client_dir, attacker_dir):
+def run_experiments(net, server, client, fake_client, attacker, home_dir, client_dir, attacker_dir):
     info( '*** Running host scripts\n')
     net.pingAll()
 
@@ -107,7 +112,9 @@ def run_experiments(net, server, client, attacker, home_dir, client_dir, attacke
 
     try:
         # run client script
-        client.cmd('sudo python masking_client_script.py {} {} &> {}/direct_logs/client_dirlog.txt &'.format(client_dir, 13, home_dir))
+        client.cmd('sudo python client_script.py {} &> {}/direct_logs/client_dirlog.txt &'.format(client_dir, home_dir))
+
+        fake_client.cmd('sudo python masking_client_script.py {} {} &> {}/direct_logs/fake_client_dirlog.txt &'.format(client_dir, 6, home_dir))
         
         # attacker.cmd('sudo python attacker_script.py {} "dig" "/16" " ," &> {}/direct_logs/attacker_dirlog.txt &'.format(attacker_dir, home_dir))
         CLI(net)
@@ -127,8 +134,8 @@ if __name__ == '__main__':
     # tbed_args  = startTBed()
     # run_experiments(*tbed_args,  home_dir, client_dir, attacker_dir)
 
-    net, [server], [client], [attacker]  = startTBed()
-    run_experiments(net, server, client, attacker,  home_dir, client_dir, attacker_dir)
+    net, [server], [client], [fake_client], [attacker]  = startTBed()
+    run_experiments(net, server, client, fake_client, attacker,  home_dir, client_dir, attacker_dir)
 
 
 

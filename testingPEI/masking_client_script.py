@@ -7,7 +7,6 @@ import urllib.request
 import random, math
 import ipaddress
 import urllib.request  as urllib2
-import subprocess
 
 
 from helpers import get_ip_from_dig_withdig, save_switches, get_ip_from_savefile
@@ -22,15 +21,11 @@ def poisson_wait_seconds(lam):
                                 lam)
     return inter_arr_time_btw_reqs
 
-def get_spoof_ip(prev_ip="10.1.0.10"):
+def get_spoof_ip():
     """NI: randomly generate an ip address and return it """
-    spoofed_ip = str(ipaddress.IPv4Address(random.randint(167837696,167903231)))
+    # return str(ipaddress.IPv4Address(random.randint(0,2 ** 32)))
     # test with constant first
-    # spoofed_ip = "10.3.0.10"
-    # subprocess.run(["sudo ifconfig fakeclient-eth0 {}".format(spoofed_ip)], shell=True)
-    # subprocess.run(["sudo ping -c3 {}".format(get_ip_from_dig_withdig(space=""))], shell=True)
-    spoofed_ip = "10.3.0.10"
-    return spoofed_ip
+    return "10.1.0.10"
 
 def client_loop(wait_time = 60, ip_use_limit=1):
     """Main loop of the client.
@@ -57,15 +52,17 @@ def client_loop(wait_time = 60, ip_use_limit=1):
     while True:
         save_switches("pre trigger")
         server_ip =  get_ip_from_dig_withdig(space="")
-
+        if ip_use >= ip_use_limit:
+            ip_use = 0
+            client_spoofed_ip = get_spoof_ip()
 
 
         logging.info("Got IP {} sending from spoofed ip {}".format(server_ip, client_spoofed_ip))
         try:
-            # proxy = urllib.request.ProxyHandler({"http": "10.1.0.10:49916",
-            #                                     "https": "10.1.0.10:49916"}) # does port need to be included?
-            # opener = urllib.request.build_opener(proxy)
-            # urllib.request.install_opener(opener)
+            proxy = urllib.request.ProxyHandler({"http": "10.1.0.10:49916",
+                                                "https": "10.1.0.10:49916"}) # does port need to be included?
+            opener = urllib.request.build_opener(proxy)
+            urllib.request.install_opener(opener)
             server_contents = urllib.request.urlopen("http://"+server_ip+"/"+random.choice(html_files), timeout=10).read()
             logging.info("Client recived reply [{}...]".format(server_contents[:12]))
         except urllib.error.HTTPError as e:
@@ -79,13 +76,8 @@ def client_loop(wait_time = 60, ip_use_limit=1):
         
         wait_time = poisson_wait_seconds(lambda_reqspersec)
         logging.info("waiting {} seconds".format(wait_time))
-        ip_use += 1
-        if ip_use >= ip_use_limit:
-            ip_use = 0
-            client_spoofed_ip = get_spoof_ip(client_spoofed_ip)
         time.sleep(wait_time)
-        
-
+        ip_use += 1
         logging.info("Next client request")
 
 if __name__ == '__main__':

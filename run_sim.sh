@@ -27,10 +27,10 @@ rm /var/log/named/bind.log
 sudo systemctl restart bind9
 
 # settings
-mtd_file="./mtd_apps/real_drop_cidr16_180_onos-app-mtd-2.4.1.oar"
+mtd_file="./mtd_apps/masking_20_drop_cidr16_60_onos-app-mtd-2.8.3.oar"
 topology_file="./testbed/testbed_topo_TCP_v6.py"
 commit=" "
-info="\nAim: more data for lambda\n Skip DNS "
+info="\nAim: Testing masking with fake client \n Skip DNS "
 
 # write out the reason and settings for this run
 echo "\n...\n"$home_dir "\nMTD file: " $mtd_file "\nToplogy file:" $topology_file $commit  $info >> $home_dir/info.txt
@@ -83,4 +83,4 @@ sleep 30
 # sudo bash -c "sudo snort -c /etc/snort/snort.conf -i s1-eth1 -h 10.0.0.100/16 -l $home_dir/defender_output/snort_output -A fast &> $home_dir/direct_logs/snort_dirlog.txt &" &
 
 # run packet capture, on client/attacker link
-sudo dumpcap  -b filesize:5000000  -i "s1-eth2"  -w $home_dir/attacker_output/traces/trace_s1_eth2 -q 
+sudo dumpcap  -b filesize:5000000  -i "s1-eth2" -i "s1-eth4"  -w $home_dir/attacker_output/traces/trace_s1_eth2_4 -q 
