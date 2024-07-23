@@ -27,7 +27,7 @@ rm /var/log/named/bind.log
 sudo systemctl restart bind9
 
 # settings
-mtd_file="./mtd_apps/real_drop_cidr16_30_onos-app-mtd-2.4.1.oar"
+mtd_file="./mtd_apps/real_drop_cidr16_30_onos-app-mtd-2.4.2.oar"
 topology_file="./testbed/testbed_topo_TCP_v6.5.py"
 commit=" "
 info="\nAim:Testing diversity MTD\n Skip DNS "
