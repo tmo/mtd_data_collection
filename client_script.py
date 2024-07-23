@@ -32,8 +32,8 @@ def client_loop(wait_time = 60):
     logger.info("Sending {} with {} seconds between requests\n".format(com_type, wait_time))
     
     ### main loop
-    lambda_reqspersec = 1/2
-    html_files = ["p100kb.html", "p100kb.html", "p100kb.html", "p500kb.html", "p500kb.html", "p500kb.html", "p500kb.html", "p1mb.html", "p1mb.html", "p1mb.html", "p2mb.html", "p3mb.html", "p4mb.html" ]
+    lambda_reqspersec = 1/5
+    html_files = ["index.html"]#["p100kb.html", "p100kb.html", "p100kb.html", "p500kb.html", "p500kb.html", "p500kb.html", "p500kb.html", "p1mb.html", "p1mb.html", "p1mb.html", "p2mb.html", "p3mb.html", "p4mb.html" ]
     
     time.sleep(1/lambda_reqspersec)
     while True:
