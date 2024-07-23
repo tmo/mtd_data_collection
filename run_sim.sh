@@ -27,10 +27,10 @@ rm /var/log/named/bind.log
 sudo systemctl restart bind9
 
 # settings
-mtd_file="./mtd_apps/masking_20_drop_cidr16_60_onos-app-mtd-2.8.3.oar"
-topology_file="./testbed/testbed_topo_TCP_v6.py"
+mtd_file="./mtd_apps/onos-app-mtd-diversity-30s-2.9.0_40004port.oar"
+topology_file="./testbed/testbed_topo_TCP_v11.py"
 commit=" "
-info="\nAim: Testing masking with fake client \n Skip DNS "
+info="\nAim:Testing diversity MTD\n Skip DNS "
 
 # write out the reason and settings for this run
 echo "\n...\n"$home_dir "\nMTD file: " $mtd_file "\nToplogy file:" $topology_file $commit  $info >> $home_dir/info.txt
@@ -69,6 +69,7 @@ echo "Finished running onos"
 sudo killall inotifywait
 # sudo sh ./mod_mtd_notify.sh &> $home_dir/defender_output/mtd_times_$data_time.txt &
 sudo bash -c "./mod_mtd_notify.sh &>> $home_dir/defender_output/mtd_times_$data_time.txt" &
+sudo bash -c "./mod_divmtd_notify.sh &>> $home_dir/defender_output/mtd_div_times_$data_time.txt" &
 sudo bash -c "./mod_dns_notify.sh &>> $home_dir/direct_logs/dns_times_$data_time.log" &
 
 # run testbed and scripts for each host
@@ -77,7 +78,7 @@ sudo killall xterm
 sudo -E xterm -hold -e bash -c "sudo mn -c && sudo -E python $topology_file $home_dir $home_dir/defender_output/ $home_dir/attacker_output/ " &
 
 # wait for interfaces to be up
-sleep 30
+sleep 40
 # start snort
 # this only tracks the server IPs
 # sudo bash -c "sudo snort -c /etc/snort/snort.conf -i s1-eth1 -h 10.0.0.100/16 -l $home_dir/defender_output/snort_output -A fast &> $home_dir/direct_logs/snort_dirlog.txt &" &
