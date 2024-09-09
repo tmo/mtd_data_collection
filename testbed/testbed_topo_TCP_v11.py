@@ -87,8 +87,9 @@ def startTBed():
 
 def run_experiments(net, server, client, fake_client, attacker, home_dir, client_dir, attacker_dir):
     info( '*** Running host scripts\n')
+    info("starting")
     net.pingAll()
-
+    info("started")
     # Configuring server 
     # server.cmd("service apache2 stop")
     # server.cmd("service apache2 start")
@@ -109,7 +110,7 @@ def run_experiments(net, server, client, fake_client, attacker, home_dir, client
     # server.cmd("service nginx restart")
     # server.cmd("service nginx reload")
     
-
+    info("running")
     # start mtd after all hosts have been registered
     server.cmd('sudo docker exec -it onos_new  sh -c "/root/onos/bin/onos-app localhost install! /root/onos/conts/mtd.oar"')
     server.cmd("cd ./server_files/v1")
@@ -118,7 +119,7 @@ def run_experiments(net, server, client, fake_client, attacker, home_dir, client
     # server.cmd("python3 -m http.server 40002 &")
     server.cmd("cd ../v3")
     server.cmd("python3 -m http.server 40003 &")
-
+    info("loaded and server")
 
     wd = str(server.cmd("pwd"))[:-2]
     server.cmd("echo 'b a n a n a s' > available-fruits.html")
@@ -128,8 +129,8 @@ def run_experiments(net, server, client, fake_client, attacker, home_dir, client
 
     time.sleep(1) # Server might need some time to start
 
-    fruits = client.cmd("wget -O -  http://" + server.IP() + "/available-fruits.html:40002")
-    print(fruits)
+    # fruits = client.cmd("wget -O -  http://" + server.IP() + "/available-fruits.html:40002")
+    # info(fruits)
     
     # server.waitOutput()
 
@@ -146,7 +147,7 @@ def run_experiments(net, server, client, fake_client, attacker, home_dir, client
 
 if __name__ == '__main__':
     if len(sys.argv) >=3 :
-        print("LEN OF ERROR", len(sys.argv))
+        info("LEN OF ERROR", len(sys.argv))
         home_dir = sys.argv[1]
         client_dir = sys.argv[2]
         attacker_dir = sys.argv[3]

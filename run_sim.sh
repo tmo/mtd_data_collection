@@ -27,13 +27,13 @@ rm /var/log/named/bind.log
 sudo systemctl restart bind9
 
 # settings
-mtd_file="./mtd_apps/onos-app-mtd-diversity-30s-2.9.0_40004port.oar"
+mtd_file="./mtd_apps/onos-app-mtd-2.10.0_Div_30s.oar"
 topology_file="./testbed/testbed_topo_TCP_v11.py"
 commit=" "
 info="\nAim:Testing diversity MTD\n Skip DNS "
 
 # write out the reason and settings for this run
-echo "\n...\n"$home_dir "\nMTD file: " $mtd_file "\nToplogy file:" $topology_file $commit  $info >> $home_dir/info.txt
+echo -e "\n...\n"$home_dir "\nMTD file: " $mtd_file "\nToplogy file:" $topology_file $commit  $info >> $home_dir/info.txt
 
 # copy server files into correct folder, for default server 1
 sudo cp -R ./testbed/server_files/html/. /var/www/html/
@@ -71,11 +71,12 @@ sudo killall inotifywait
 sudo bash -c "./mod_mtd_notify.sh &>> $home_dir/defender_output/mtd_times_$data_time.txt" &
 sudo bash -c "./mod_divmtd_notify.sh &>> $home_dir/defender_output/mtd_div_times_$data_time.txt" &
 sudo bash -c "./mod_dns_notify.sh &>> $home_dir/direct_logs/dns_times_$data_time.log" &
+sudo bash -c "./mod_vportmtd_notify.sh &>> $home_dir/defender_output/mtd_vport_times_$data_time.log" &
 
 # run testbed and scripts for each host
 # sudo mn -c && sudo -E python ./testbed/testbed_topo_TCP_v5.py $home_dir $home_dir/defender_output/ $home_dir/attacker_output/ 
 sudo killall xterm
-sudo -E xterm -hold -e bash -c "sudo mn -c && sudo -E python $topology_file $home_dir $home_dir/defender_output/ $home_dir/attacker_output/ " &
+sudo -E xterm -hold -e bash -c "sudo mn -c && sudo -E python $topology_file $home_dir $home_dir/defender_output/ $home_dir/attacker_output/ > ./test.log" &
 
 # wait for interfaces to be up
 sleep 40

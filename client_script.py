@@ -7,7 +7,7 @@ import urllib.request
 import random, math
 
 
-from helpers import get_ip_from_dig_withdig, save_switches, get_ip_from_savefile
+from helpers import get_ip_from_dig_withdig, save_switches, get_ip_from_savefile, get_port_from_savefile
 
 def poisson_wait_seconds(lam):
     """ 
@@ -39,13 +39,15 @@ def client_loop(wait_time = 60):
 
     time.sleep(1/lambda_reqspersec)
     while True:
-        # save_switches("pre trigger")
+        save_switches("pre trigger")
         server_ip =  get_ip_from_dig_withdig(space="")
+        server_port = str(get_port_from_savefile(server_ip))
 
 
         logging.info("Got IP {}".format(server_ip))
         try:
-            server_contents = urllib.request.urlopen("http://"+server_ip+"/"+random.choice(html_files), timeout=1).read()
+            server_contents = urllib.request.urlopen("http://"+server_ip+":"+server_port+"/"+random.choice(html_files), timeout=1).read()
+            logging.info("Requesting {}".format("http://"+server_ip+":"+server_port+"/"+random.choice(html_files)))
             logging.info("Client recived reply [{}...]".format(server_contents[:12]))
         except urllib.error.HTTPError as e:
             logging.info("Client request returned error {}".format(e))
@@ -54,7 +56,7 @@ def client_loop(wait_time = 60):
         except Exception as e:
             logging.info("Another exception occured {}".format(e))
         
-        # save_switches("post trigger")
+        save_switches("post trigger")
         
         wait_time = poisson_wait_seconds(lambda_reqspersec)
         logging.info("waiting {} seconds".format(wait_time))

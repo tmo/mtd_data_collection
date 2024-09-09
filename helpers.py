@@ -69,3 +69,17 @@ def save_switches(info_to_print):
         subprocess.run(["sudo ovs-ofctl dump-flows s2  --protocols=OpenFlow13"], shell=True)
     except Exception as e:
         print(e)
+
+def get_port_from_savefile(ip):
+    """ Get the vPort for a given ip from the file saved in etczones"""
+    try:
+        with open(os.path.abspath("/etc/bind/zones/shuffle_ports.txt"), 'r') as f:      
+            ports = f.read()
+
+        port_match  = re.findall("[0-9|=]*(?=})", re.findall(f"((?<={ip}={{).*)", ports)[0])[0] # get 'rPort=vPort'
+        port = port_match.split("=")[1]
+        logging.info("Got vPort {} from shuffle_ports.txt".format(port))
+        return port
+    except:
+        logging.warn("Cannot find port for ip {}, returning 80".format(ip))
+        return 80
