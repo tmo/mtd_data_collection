@@ -27,10 +27,10 @@ rm /var/log/named/bind.log
 sudo systemctl restart bind9
 
 # settings
-mtd_file="./mtd_apps/masking_20_drop_cidr16_60_onos-app-mtd-2.8.3.oar"
-topology_file="./testbed/testbed_topo_TCP_v6.py"
+mtd_file="./mtd_apps/servermasking_15_drop_cidr16_180_onos-app-mtd-2.11.3.oar"
+topology_file="./testbed/testbed_topo_TCP_v11.py"
 commit=" "
-info="\nAim: Testing masking with fake client \n Skip DNS "
+info="\nAim: Testing masking with fake server \n Skip DNS "
 
 # write out the reason and settings for this run
 echo "\n...\n"$home_dir "\nMTD file: " $mtd_file "\nToplogy file:" $topology_file $commit  $info >> $home_dir/info.txt

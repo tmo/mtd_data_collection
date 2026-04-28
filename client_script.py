@@ -40,7 +40,7 @@ def client_loop(wait_time = 60):
     time.sleep(1/lambda_reqspersec)
     while True:
         # save_switches("pre trigger")
-        server_ip =  get_ip_from_dig_withdig(space="")
+        server_ip =  get_ip_from_savefile(1)
 
 
         logging.info("Got IP {}".format(server_ip))
@@ -78,7 +78,7 @@ def client_persistant_loop(wait_time = 60):
     
     ### main loop
     while True:
-        server_ip =  get_ip_from_dig_withdig(space="")
+        server_ip =  get_ip_from_savefile(1)
         logging.info("Got IP {}".format(server_ip))
         try:
             server_contents = urllib.request.urlopen("http://"+server_ip+"/DVWA").read()
